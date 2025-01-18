@@ -4,7 +4,7 @@ import logo from "../assets/logo.svg";
 const Header = () => {
   return (
     <>
-      <div className="bg-[var(--bg-color)] text-[var(--text-color)] flex justify-between items-center">
+      <div className="bg-[var(--primary-color)] text-[var(--text-color)] px-40 flex justify-between items-center">
         <img src={logo} alt="" className="size-40" />
         <div className="flex">
           <div className="size-40 text-center content-center">
