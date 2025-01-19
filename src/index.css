@@ -11,6 +11,7 @@
   --primary-color: rgb(57, 62, 70);
   --secondary-color: rgb(255, 211, 105);
   --text-color: rgb(238, 238, 238);
+  --header-height-sm: 5rem;
 }
 
 * {
@@ -18,10 +19,6 @@
   padding: 0;
   box-sizing: border-box;
   font-family: "Poppins";
-}
-
-html {
-  font-size: 65%;
 }
 
 .min-screen {
