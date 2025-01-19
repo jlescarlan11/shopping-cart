@@ -12,6 +12,8 @@
   --secondary-color: rgb(255, 211, 105);
   --text-color: rgb(238, 238, 238);
   --header-height-sm: 5rem;
+  --header-height-md: 7rem;
+  --header-height-lg: 10rem;
 }
 
 * {
