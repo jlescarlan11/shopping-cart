@@ -26,7 +26,7 @@ const Header = () => {
               className="size-[var(--header-height-sm)] md:size-[var(--header-height-md)] lg:size-[var(--header-height-lg)] text-center content-center"
               onClick={() => setShowMenu(!showMenu)}
             >
-              <span className="material-symbols-outlined text-2xl md:text-4xl lg:text-6xl">
+              <span className="material-symbols-outlined text-base md:text-lg lg:text-2xl">
                 menu
               </span>
             </button>
@@ -39,7 +39,7 @@ const Header = () => {
               onClick={() => setShowMenu(!showMenu)}
             >
               <div className="size-[var(--header-height-sm)] md:size-[var(--header-height-md)] lg:size-[var(--header-height-lg)] text-center content-center">
-                <span className="material-symbols-outlined text-2xl md:text-4xl lg:text-6xl">
+                <span className="material-symbols-outlined text-base md:text-lg lg:text-2xl">
                   close
                 </span>
               </div>
@@ -53,10 +53,12 @@ const Header = () => {
                 >
                   <div>
                     <div className="size-[var(--header-height-sm)] md:size-[var(--header-height-md)] lg:size-[var(--header-height-lg)] text-center content-center">
-                      <span className="material-symbols-outlined text-2xl md:text-4xl lg:text-6xl">
+                      <span className="material-symbols-outlined text-base md:text-lg lg:text-2xl">
                         {menuItem.icon}
                       </span>
-                      <p>{menuItem.label}</p>
+                      <p className="text-sm md:text-sm lg:text-xl">
+                        {menuItem.label}
+                      </p>
                     </div>
                   </div>
                 </NavLink>
