@@ -41,13 +41,24 @@ const Shop = () => {
 
   return (
     <>
+      <div>
+        <ul>
+          <li>All</li>
+          <li>Men</li>
+          <li>Women</li>
+          <li>Accesories</li>
+        </ul>
+      </div>
       <div className="bg-[var(--bg-color)] min-h-[calc(100vh-var(--header-height-sm))]  md:min-h-[calc(100vh-var(--header-height-md))] lg:min-h-[calc(100vh-var(--header-height-lg))] text-[var(--text-color)] px-8 sm:px-24 lg:px-72 grid sample gap-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {items.map((item, index) => (
-          <div key={item.id} className="min-w-24 h-fit  border  bg-slate-80">
-            <div className="">
-              <img src={item.image} className="w-auto h-52 bg-transparent" />
+          <div key={item.id} className="min-w-24 h-auto bg-[#ffffff]">
+            <div className="flex flex-col">
+              <img
+                src={item.image}
+                className="w-auto h-52 bg-transparent p-4"
+              />
               <div className="flex justify-between items-center p-4">
-                <div className="  ">
+                <div className="text-xs">
                   <span className="">{item.title}</span>
                   <br />
                   <span className="">{item.price}</span>
