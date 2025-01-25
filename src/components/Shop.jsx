@@ -4,6 +4,7 @@ import { use } from "react";
 const Shop = () => {
   const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState(items);
+  const [seeMore, setSeeMore] = useState(false);
 
   const categories = [
     { label: "All", category: "" },
@@ -53,6 +54,10 @@ const Shop = () => {
     setFilteredItems(items);
   }, [items]);
 
+  useEffect(() => {
+    setSeeMore(false);
+  }, []);
+
   return (
     <>
       <nav className="bg-[var(--bg-color)]">
@@ -77,35 +82,60 @@ const Shop = () => {
       </nav>
       <div className="bg-[var(--bg-color)] min-h-[calc(100vh-var(--header-height-sm))]  md:min-h-[calc(100vh-var(--header-height-md))] lg:min-h-[calc(100vh-var(--header-height-lg))] text-[var(--text-color)] py-8 px-8 sm:px-24 lg:px-72 grid sample gap-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {filteredItems.map((item, index) => (
-          <div key={item.id} className="min-w-24 bg-[#ffffff] flex flex-col">
-            <div className="flex flex-col h-96">
-              <img
-                src={item.image}
-                className="w-auto h-52 bg-transparent p-4"
-              />
-              <div className="flex items-center justify-between p-4 h-[calc(100%-13rem)] gap-4">
-                <div className="text-xs h-full flex flex-col justify-between items-baseline">
-                  <div>
-                    <span className="">{item.title}</span>
-                  </div>
-                  <div className="">
-                    <span className="">{item.price}</span>
-                  </div>
-                </div>
-                <div className="text-xs h-full flex flex-col justify-between items-center">
-                  <div>
-                    <span className="flex items-center">
-                      {item.rating.rate}{" "}
-                      <span className="material-symbols-outlined text-sm">
-                        star
-                      </span>
-                    </span>
-                  </div>
-                  <span className="material-symbols-outlined">
-                    add_shopping_cart
+          <div
+            key={item.id}
+            className="min-w-24 bg-[#ffffff] flex flex-col justify-between"
+          >
+            <div className="flex flex-col h-auto justify-between p-4">
+              <div className="flex flex-col gap-1">
+                <img
+                  src={item.image}
+                  className="w-auto h-52 bg-transparent p-4"
+                />
+                <div>
+                  <span
+                    className="truncate w-full block cursor-pointer"
+                    onClick={() => {
+                      console.log("Title clicked");
+                      setSeeMore(!seeMore);
+                    }}
+                  >
+                    {!seeMore &&
+                      (item.title.length > 30 ? (
+                        <>
+                          {item.title.slice(0, 29)}
+                          <span className="material-symbols-outlined text-sm">
+                            more_horiz
+                          </span>
+                        </>
+                      ) : (
+                        item.title
+                      ))}
+                    {seeMore && item.title}
                   </span>
                 </div>
+                <span className="flex items-center">
+                  {item.rating.rate}{" "}
+                  <span className="material-symbols-outlined text-sm">
+                    star
+                  </span>
+                </span>
               </div>
+              <div className="flex justify-between items-center">
+                <div className="text-base font-medium">
+                  <span className="">₱ {item.price}.00</span>
+                </div>
+                <span className="material-symbols-outlined cursor-p">
+                  add_shopping_cart
+                </span>
+              </div>
+
+              {/* <div className="flex items-center justify-between p-4 h-[calc(100%-13rem)] gap-4">
+                <div className="text-xs h-full flex flex-col justify-between items-baseline"></div>
+                <div className="text-xs h-full flex flex-col justify-between items-center">
+                  <div></div>
+                </div>
+              </div> */}
             </div>
           </div>
         ))}
