@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { use } from "react";
 
-const Shop = () => {
+const Shop = ({ addToCart }) => {
   const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState(items);
-  const [seeMore, setSeeMore] = useState(false);
+  const [seeMore, setSeeMore] = useState({});
 
   const categories = [
     { label: "All", category: "" },
@@ -54,9 +54,12 @@ const Shop = () => {
     setFilteredItems(items);
   }, [items]);
 
-  useEffect(() => {
-    setSeeMore(false);
-  }, []);
+  const toggleSeeMore = (id) => {
+    setSeeMore((prevState) => {
+      const newState = { ...prevState, [id]: !prevState[id] };
+      return newState;
+    });
+  };
 
   return (
     <>
@@ -94,24 +97,22 @@ const Shop = () => {
                 />
                 <div>
                   <span
-                    className="truncate w-full block cursor-pointer"
+                    className=" w-full block cursor-pointer"
                     onClick={() => {
                       console.log("Title clicked");
-                      setSeeMore(!seeMore);
+                      toggleSeeMore(item.id);
                     }}
                   >
-                    {!seeMore &&
-                      (item.title.length > 30 ? (
+                    {!seeMore[item.id] &&
+                      (item.title.length > 20 ? (
                         <>
-                          {item.title.slice(0, 29)}
-                          <span className="material-symbols-outlined text-sm">
-                            more_horiz
-                          </span>
+                          {item.title.slice(0, 19)}
+                          ...
                         </>
                       ) : (
                         item.title
                       ))}
-                    {seeMore && item.title}
+                    {seeMore[item.id] && item.title}
                   </span>
                 </div>
                 <span className="flex items-center">
@@ -123,9 +124,12 @@ const Shop = () => {
               </div>
               <div className="flex justify-between items-center">
                 <div className="text-base font-medium">
-                  <span className="">₱ {item.price}.00</span>
+                  <span className="">₱ {item.price}</span>
                 </div>
-                <span className="material-symbols-outlined cursor-p">
+                <span
+                  className="material-symbols-outlined cursor-p"
+                  onClick={() => addToCart(item)}
+                >
                   add_shopping_cart
                 </span>
               </div>
