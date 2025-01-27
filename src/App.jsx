@@ -56,12 +56,12 @@ function App() {
         // Update quantity
         return prevCart.map((cartItem) =>
           cartItem.id === item.id
-            ? { ...cartItem, quantity: cartItem.quantity + 1 }
+            ? { ...cartItem, quantity: cartItem.quantity + item.quantity }
             : cartItem
         );
       } else {
         // Add new item
-        return [...prevCart, { ...item, quantity: 1 }];
+        return [...prevCart, { ...item }];
       }
     });
 

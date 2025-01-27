@@ -1,10 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { use } from "react";
 
-const Shop = ({ addToCart }) => {
+const Shop = ({ addToCart, cart }) => {
   const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState(items);
   const [seeMore, setSeeMore] = useState({});
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [confirmationMessage, setConfirmationMessage] = useState("");
+  const [isFadingOut, setIsFadingOut] = useState(false);
+
+  const showConfirmation = (message) => {
+    setConfirmationMessage(message);
+    setIsFadingOut(false);
+
+    // Trigger fade-out after 2.5 seconds
+    setTimeout(() => setIsFadingOut(true), 1000);
+
+    // Clear the message after the transition ends
+    setTimeout(() => setConfirmationMessage(""), 2000);
+  };
 
   const categories = [
     { label: "All", category: "" },
@@ -61,6 +77,16 @@ const Shop = ({ addToCart }) => {
     });
   };
 
+  const showModal = (item) => {
+    setSelectedItem(item);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setSelectedItem(null);
+  };
+
   return (
     <>
       <nav className="bg-[var(--bg-color)]">
@@ -94,25 +120,11 @@ const Shop = ({ addToCart }) => {
                 <img
                   src={item.image}
                   className="w-auto h-52 bg-transparent p-4"
+                  onClick={() => showModal(item)}
                 />
                 <div>
-                  <span
-                    className=" w-full block cursor-pointer"
-                    onClick={() => {
-                      console.log("Title clicked");
-                      toggleSeeMore(item.id);
-                    }}
-                  >
-                    {!seeMore[item.id] &&
-                      (item.title.length > 20 ? (
-                        <>
-                          {item.title.slice(0, 19)}
-                          ...
-                        </>
-                      ) : (
-                        item.title
-                      ))}
-                    {seeMore[item.id] && item.title}
+                  <span className="truncate w-full block cursor-pointer">
+                    {item.title}
                   </span>
                 </div>
                 <span className="flex items-center">
@@ -126,20 +138,75 @@ const Shop = ({ addToCart }) => {
                 <div className="text-base font-medium">
                   <span className="">₱ {item.price}</span>
                 </div>
-                <span
+                {/* <span
                   className="material-symbols-outlined cursor-p"
                   onClick={() => addToCart(item)}
                 >
                   add_shopping_cart
-                </span>
+                </span> */}
               </div>
 
-              {/* <div className="flex items-center justify-between p-4 h-[calc(100%-13rem)] gap-4">
-                <div className="text-xs h-full flex flex-col justify-between items-baseline"></div>
-                <div className="text-xs h-full flex flex-col justify-between items-center">
-                  <div></div>
+              {modalVisible && selectedItem && (
+                <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
+                  <div className="bg-white p-6 rounded-lg max-w-md w-full">
+                    <h2 className="text-xl font-bold mb-4">
+                      {selectedItem.title}
+                    </h2>
+                    <img
+                      src={selectedItem.image}
+                      className="w-full h-64 object-cover mb-4"
+                    />
+                    <p className="mb-4">{selectedItem.description}</p>
+
+                    <div className="flex items-center justify-between">
+                      <p className="text-lg font-semibold">
+                        Price: ₱ {selectedItem.price}
+                      </p>
+                      <div className="flex items-center gap-4">
+                        <input
+                          type="number"
+                          name="quantity"
+                          id="quantity"
+                          min="1"
+                          defaultValue="1"
+                          className="w-16 px-2 py-1 border rounded-lg"
+                          onChange={(e) => setQuantity(Number(e.target.value))}
+                        />
+                        <span
+                          className="material-symbols-outlined cursor-p"
+                          onClick={() => {
+                            addToCart({ ...selectedItem, quantity });
+                            showConfirmation("Item added to cart!");
+                          }}
+                        >
+                          add_shopping_cart
+                        </span>
+                      </div>
+                      {confirmationMessage && (
+                        <div
+                          className={`fixed inset-0 flex justify-center items-center bg-black bg-opacity-30 z-50 transition-opacity animate-fade-in duration-500 ${
+                            isFadingOut ? "opacity-0" : "opacity-100"
+                          }`}
+                        >
+                          <div
+                            className={`bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg transform transition-transform duration-500 ${
+                              isFadingOut ? "scale-90" : "scale-100"
+                            }`}
+                          >
+                            {confirmationMessage}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg"
+                      onClick={closeModal}
+                    >
+                      Close
+                    </button>
+                  </div>
                 </div>
-              </div> */}
+              )}
             </div>
           </div>
         ))}
