@@ -87,6 +87,18 @@ const Shop = ({ addToCart, cart }) => {
     setSelectedItem(null);
   };
 
+  useEffect(() => {
+    if (modalVisible) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto"; // Cleanup when unmounting
+    };
+  }, [modalVisible]);
+
   return (
     <>
       <nav className="bg-[var(--bg-color)]">
@@ -149,9 +161,18 @@ const Shop = ({ addToCart, cart }) => {
               {modalVisible && selectedItem && (
                 <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
                   <div className="bg-white p-6 rounded-lg max-w-md w-full">
-                    <h2 className="text-xl font-bold mb-4">
-                      {selectedItem.title}
-                    </h2>
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-xl font-bold">
+                        {selectedItem.title}
+                      </h2>
+
+                      <span
+                        className="material-symbols-outlined"
+                        onClick={closeModal}
+                      >
+                        close
+                      </span>
+                    </div>
                     <img
                       src={selectedItem.image}
                       className="w-full h-64 object-cover mb-4"
@@ -172,15 +193,18 @@ const Shop = ({ addToCart, cart }) => {
                           className="w-16 px-2 py-1 border rounded-lg"
                           onChange={(e) => setQuantity(Number(e.target.value))}
                         />
-                        <span
-                          className="material-symbols-outlined cursor-p"
+                        <div
+                          className="flex flex-col items-center"
                           onClick={() => {
                             addToCart({ ...selectedItem, quantity });
                             showConfirmation("Item added to cart!");
                           }}
                         >
-                          add_shopping_cart
-                        </span>
+                          <span className="material-symbols-outlined cursor-p">
+                            add_shopping_cart
+                          </span>
+                          <span className="text-xs">Add to Cart</span>
+                        </div>
                       </div>
                       {confirmationMessage && (
                         <div
@@ -198,12 +222,6 @@ const Shop = ({ addToCart, cart }) => {
                         </div>
                       )}
                     </div>
-                    <button
-                      className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg"
-                      onClick={closeModal}
-                    >
-                      Close
-                    </button>
                   </div>
                 </div>
               )}
