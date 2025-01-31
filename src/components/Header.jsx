@@ -14,7 +14,7 @@ const Header = () => {
 
   return (
     <>
-      <div className="bg-[var(--primary-color)] text-[var(--text-color)] px-8 md:px-12 lg:px-16 ">
+      <div className="fixed top-0 left-0 w-full bg-[var(--primary-color)] text-[var(--text-color)] px-8 md:px-12 lg:px-16 ">
         <div className="flex justify-between items-center">
           <img
             src={logo}

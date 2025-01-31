@@ -101,12 +101,12 @@ const Shop = ({ addToCart, cart }) => {
 
   return (
     <>
-      <nav className="bg-[var(--bg-color)]">
-        <ul className="flex justify-center gap-4">
+      <nav className="bg-[var(--bg-color)] fixed top-[var(--header-height-sm)] md:top-[var(--header-height-md)] lg:top-[var(--header-height-lg)] left-0 w-full z-10">
+        <ul className="flex justify-center gap-4 flex-wrap">
           {categories.map((category, index) => (
             <li
               key={index}
-              className="p-4"
+              className="p-4 cursor-pointer"
               onClick={() => {
                 const filteredItems = items.filter((item) =>
                   category.category
@@ -121,13 +121,10 @@ const Shop = ({ addToCart, cart }) => {
           ))}
         </ul>
       </nav>
-      <div className="bg-[var(--bg-color)] min-h-[calc(100vh-var(--header-height-sm))]  md:min-h-[calc(100vh-var(--header-height-md))] lg:min-h-[calc(100vh-var(--header-height-lg))] text-[var(--text-color)] py-8 px-8 sm:px-24 lg:px-72 grid sample gap-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="bg-[var(--bg-color)] min-h-screen pt-[calc(var(--header-height-sm)*2)] md:pt-[calc(var(--header-height-md)*2)] lg:pt-[calc(var(--header-height-lg)*2)] text-[var(--text-color)] py-8 px-32 justify-center grid sample gap-16 grid-cols-[repeat(auto-fill,15rem)]">
         {filteredItems.map((item, index) => (
-          <div
-            key={item.id}
-            className="min-w-24 bg-[#ffffff] flex flex-col justify-between"
-          >
-            <div className="flex flex-col h-auto justify-between p-4">
+          <div key={item.id} className="min-w-24  flex-col justify-between">
+            <div className="flex flex-col h-fit justify bg-[#ffffff] flex-between p-4">
               <div className="flex flex-col gap-1">
                 <img
                   src={item.image}
@@ -159,28 +156,29 @@ const Shop = ({ addToCart, cart }) => {
               </div>
 
               {modalVisible && selectedItem && (
-                <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
+                <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center cursor-context-menu">
                   <div className="bg-white p-6 rounded-lg max-w-md w-full">
                     <div className="flex items-center justify-between">
-                      <h2 className="text-xl font-bold">
+                      <h2 className="text-lg font-bold">
                         {selectedItem.title}
                       </h2>
 
                       <span
-                        className="material-symbols-outlined"
+                        className="material-symbols-outlined cursor-pointer"
                         onClick={closeModal}
                       >
                         close
                       </span>
                     </div>
-                    <img
-                      src={selectedItem.image}
-                      className="w-full h-64 object-cover mb-4"
-                    />
-                    <p className="mb-4">{selectedItem.description}</p>
+                    <div className="w-full h-64 flex justify-center p-4">
+                      <img src={selectedItem.image} className=" " />
+                    </div>
+                    <p className="text-base text-justify mb-4">
+                      {selectedItem.description}
+                    </p>
 
                     <div className="flex items-center justify-between">
-                      <p className="text-lg font-semibold">
+                      <p className="text-base font-semibold">
                         Price: ₱ {selectedItem.price}
                       </p>
                       <div className="flex items-center gap-4">
@@ -194,13 +192,13 @@ const Shop = ({ addToCart, cart }) => {
                           onChange={(e) => setQuantity(Number(e.target.value))}
                         />
                         <div
-                          className="flex flex-col items-center"
+                          className="flex flex-col items-center cursor-pointer"
                           onClick={() => {
                             addToCart({ ...selectedItem, quantity });
                             showConfirmation("Item added to cart!");
                           }}
                         >
-                          <span className="material-symbols-outlined cursor-p">
+                          <span className="material-symbols-outlined ">
                             add_shopping_cart
                           </span>
                           <span className="text-xs">Add to Cart</span>
