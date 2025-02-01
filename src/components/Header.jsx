@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import logo from "../assets/logo.svg";
 import { NavLink } from "react-router-dom";
 
@@ -12,9 +12,21 @@ const Header = () => {
     { icon: "shopping_cart", label: "Cart", path: "/cart" },
   ];
 
+  useEffect(() => {
+    if (showMenu) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto"; // Cleanup when unmounting
+    };
+  }, [showMenu]);
+
   return (
     <>
-      <div className="fixed top-0 left-0 w-full bg-[var(--primary-color)] text-[var(--text-color)] px-8 md:px-12 lg:px-16 ">
+      <div className="sticky top-0 left-0 w-full bg-[var(--primary-color)] text-[var(--text-color)] px-8 md:px-12 lg:px-16 ">
         <div className="flex justify-between items-center">
           <img
             src={logo}
@@ -33,7 +45,7 @@ const Header = () => {
           </div>
         </div>
         {showMenu && (
-          <nav className="flex flex-col items-center justify-center absolute top-0 left-0 w-full h-full bg-[var(--primary-color)]">
+          <nav className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[var(--primary-color)]">
             <button
               className="absolute top-0 right-8 md:right-12 lg:right-16"
               onClick={() => setShowMenu(!showMenu)}

@@ -101,8 +101,8 @@ const Shop = ({ addToCart, cart }) => {
 
   return (
     <>
-      <nav className="bg-[var(--bg-color)] fixed top-[var(--header-height-sm)] md:top-[var(--header-height-md)] lg:top-[var(--header-height-lg)] left-0 w-full z-10">
-        <ul className="flex justify-center gap-4 flex-wrap">
+      <nav className=" bg-[var(--bg-color)] top-[var(--header-height-sm)] md:top-[var(--header-height-md)] lg:top-[var(--header-height-lg)] left-0 w-full z-10">
+        <ul className=" flex  justify-center gap-4 flex-wrap">
           {categories.map((category, index) => (
             <li
               key={index}
@@ -121,7 +121,7 @@ const Shop = ({ addToCart, cart }) => {
           ))}
         </ul>
       </nav>
-      <div className="bg-[var(--bg-color)] min-h-screen pt-[calc(var(--header-height-sm)*2)] md:pt-[calc(var(--header-height-md)*2)] lg:pt-[calc(var(--header-height-lg)*2)] text-[var(--text-color)] py-8 px-32 justify-center grid sample gap-16 grid-cols-[repeat(auto-fill,15rem)]">
+      <div className="bg-[var(--bg-color)] min-h-[calc(100vh-(var(--header-height-sm)*2))] md:min-h-[calc(100vh-(var(--header-height-md)*2))] lg:min-h-[calc(100vh-(var(--header-height-lg)*2))] text-[var(--text-color)] py-8 px-32 justify-center grid sample gap-16 grid-cols-[repeat(auto-fill,15rem)]">
         {filteredItems.map((item, index) => (
           <div key={item.id} className="min-w-24  flex-col justify-between">
             <div className="flex flex-col h-fit justify bg-[#ffffff] flex-between p-4">
