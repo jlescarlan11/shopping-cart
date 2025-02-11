@@ -23,7 +23,19 @@ const Cart = ({ cart, removeFromCart }) => {
   return (
     <div className="p-4 flex flex-col min-h-[calc(100vh-var(--header-height-sm))]  md:min-h-[calc(100vh-var(--header-height-md))] lg:min-h-[calc(100vh-var(--header-height-lg))] justify-between">
       <div>
-        <h2 className="text-2xl font-bold mb-4">Your Cart</h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold">Your Cart</h2>
+          <span
+            onClick={handleRemoveSelected}
+            className={`material-symbols-outlined px-4 py-2 ${
+              selectedItems.length === 0
+                ? "text-gray-400 cursor-not-allowed"
+                : "text-black cursor-pointer"
+            }`}
+          >
+            delete
+          </span>
+        </div>
         <div className="flex flex-col gap-2">
           {cart.length === 0 ? (
             <p>Your cart is empty.</p>
@@ -53,15 +65,22 @@ const Cart = ({ cart, removeFromCart }) => {
           )}
         </div>
         {/* Remove selected items button */}
+      </div>
+      <div className="flex gap-4 items-center justify-end">
+        <span>
+          Total: ₱{" "}
+          {cart
+            .filter((item) => selectedItems.includes(item.id))
+            .reduce((total, item) => total + item.price * item.quantity, 0)}
+        </span>
         <button
+          className="border bg-red-300 p-4"
           onClick={handleRemoveSelected}
-          className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
           disabled={selectedItems.length === 0}
         >
-          Remove Selected
+          Checkout
         </button>
       </div>
-      <button className="border bg-red-300 p-4">Checkout</button>
     </div>
   );
 };
