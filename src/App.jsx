@@ -17,7 +17,7 @@ const Layout = ({ children }) => {
   );
 };
 
-const routes = (addToCart, cart, removeFromCart) =>
+const routes = (addToCart, cart, removeFromCart, updateCart) =>
   createBrowserRouter([
     {
       path: "/",
@@ -39,7 +39,11 @@ const routes = (addToCart, cart, removeFromCart) =>
       path: "/cart",
       element: (
         <Layout>
-          <Cart cart={cart} removeFromCart={removeFromCart} />
+          <Cart
+            cart={cart}
+            removeFromCart={removeFromCart}
+            updateCart={updateCart}
+          />
         </Layout>
       ),
     },
@@ -80,6 +84,35 @@ function App() {
       .catch((err) => console.error("Error:", err));
   };
 
+  const updateCart = async (itemId) => {
+    setCart((prevCart) =>
+      prevCart.map((cartItem) =>
+        cartItem.id === itemId
+          ? { ...cartItem, quantity: cartItem.quantity + 1 }
+          : cartItem
+      )
+    );
+
+    try {
+      // Update the quantity in the server
+      const response = await fetch(`https://fakestoreapi.com/carts/${itemId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          quantity: cart.find((item) => item.id === itemId).quantity + 1,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to update quantity for item with ID: ${itemId}`
+        );
+      }
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+    }
+  };
+
   const removeFromCart = async (itemIds) => {
     try {
       // Assuming you need to delete each item from an API
@@ -110,8 +143,12 @@ function App() {
   };
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
-      <RouterProvider router={routes(addToCart, cart, removeFromCart)} />
+    <CartContext.Provider
+      value={{ cart, addToCart, removeFromCart, updateCart }}
+    >
+      <RouterProvider
+        router={routes(addToCart, cart, removeFromCart, updateCart)}
+      />
     </CartContext.Provider>
   );
 }

@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 
-const Cart = ({ cart, removeFromCart }) => {
+const Cart = ({ cart, removeFromCart, updateCart }) => {
   const [selectedItems, setSelectedItems] = useState([]);
+  const [quantities, setQuantities] = useState(
+    cart.reduce((acc, item) => ({ ...acc, [item.id]: item.quantity }), {})
+  );
 
   const handleCheckboxChange = (itemTitle) => {
     setSelectedItems(
@@ -18,6 +21,18 @@ const Cart = ({ cart, removeFromCart }) => {
 
     await removeFromCart(selectedItems);
     setSelectedItems([]); // Clear selection after deletion
+  };
+
+  const handleQuantityChange = (itemId, newQuantity) => {
+    if (newQuantity < 1) return; // Prevent negative or zero quantity
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [itemId]: newQuantity,
+    }));
+  };
+
+  const handleQuantityUpdate = async (itemId) => {
+    await updateCart(itemId, quantities[itemId]);
   };
 
   return (
@@ -58,7 +73,18 @@ const Cart = ({ cart, removeFromCart }) => {
                     <h3 className="font-medium">{item.title}</h3>
                     <p>₱ {item.price}</p>
                   </div>
-                  <p>Quantity: {item.quantity}</p>
+                  <input
+                    type="number"
+                    value={quantities[item.id]}
+                    onChange={(e) =>
+                      handleQuantityChange(item.id, parseInt(e.target.value))
+                    }
+                    onBlur={() => handleQuantityUpdate(item.id)}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && handleQuantityUpdate(item.id)
+                    }
+                    className="w-16 border rounded text-center"
+                  />
                 </label>
               </div>
             ))
@@ -67,12 +93,18 @@ const Cart = ({ cart, removeFromCart }) => {
         {/* Remove selected items button */}
       </div>
       <div className="flex gap-4 items-center justify-end">
-        <span>
-          Total: ₱{" "}
-          {cart
-            .filter((item) => selectedItems.includes(item.id))
-            .reduce((total, item) => total + item.price * item.quantity, 0)}
-        </span>
+        <div className="w-32">
+          <span>
+            Total: ₱{" "}
+            {cart
+              .filter((item) => selectedItems.includes(item.id))
+              .reduce(
+                (total, item) =>
+                  total + item.price * (quantities[item.id] || item.quantity),
+                0
+              )}
+          </span>
+        </div>
         <button
           className="border bg-red-300 p-4"
           onClick={handleRemoveSelected}
