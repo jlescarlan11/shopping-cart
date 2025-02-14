@@ -5,6 +5,27 @@ const Cart = ({ cart, removeFromCart, updateCart }) => {
   const [quantities, setQuantities] = useState(
     cart.reduce((acc, item) => ({ ...acc, [item.id]: item.quantity }), {})
   );
+  const [confirmationMessage, setConfirmationMessage] = useState("");
+  const [isFadingOut, setIsFadingOut] = useState(false);
+
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  const showConfirmation = async (message) => {
+    return new Promise((resolve) => {
+      setConfirmationMessage(message);
+      setIsFadingOut(false);
+
+      // Trigger fade-out after 2.5 seconds
+      setTimeout(() => setIsFadingOut(true), 1000);
+
+      // Clear the message after the transition ends
+      setTimeout(() => {
+        setConfirmationMessage("");
+        resolve();
+        handleRemoveSelected();
+      }, 1000);
+    });
+  };
 
   const handleCheckboxChange = (itemTitle) => {
     setSelectedItems(
@@ -21,6 +42,8 @@ const Cart = ({ cart, removeFromCart, updateCart }) => {
 
     await removeFromCart(selectedItems);
     setSelectedItems([]); // Clear selection after deletion
+
+    await new Promise((resolve) => setTimeout(resolve, 10000));
   };
 
   const handleQuantityChange = (itemId, newQuantity) => {
@@ -41,7 +64,9 @@ const Cart = ({ cart, removeFromCart, updateCart }) => {
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Your Cart</h2>
           <span
-            onClick={handleRemoveSelected}
+            onClick={async () => {
+              await Promise.all([showConfirmation("Item removed from cart!")]);
+            }}
             className={`material-symbols-outlined px-4 py-2 ${
               selectedItems.length === 0
                 ? "text-gray-400 cursor-not-allowed"
@@ -51,6 +76,21 @@ const Cart = ({ cart, removeFromCart, updateCart }) => {
             delete
           </span>
         </div>
+        {confirmationMessage && (
+          <div
+            className={`fixed inset-0 flex justify-center items-center bg-black bg-opacity-30 z-50 transition-opacity animate-fade-in duration-500 ${
+              isFadingOut ? "opacity-0" : "opacity-100"
+            }`}
+          >
+            <div
+              className={`bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg transform transition-transform duration-500 ${
+                isFadingOut ? "scale-90" : "scale-100"
+              }`}
+            >
+              {confirmationMessage}
+            </div>
+          </div>
+        )}
         <div className="flex flex-col gap-2">
           {cart.length === 0 ? (
             <p>Your cart is empty.</p>
@@ -73,19 +113,19 @@ const Cart = ({ cart, removeFromCart, updateCart }) => {
                     <h3 className="font-medium">{item.title}</h3>
                     <p>₱ {item.price}</p>
                   </div>
-                  <input
-                    type="number"
-                    value={quantities[item.id]}
-                    onChange={(e) =>
-                      handleQuantityChange(item.id, parseInt(e.target.value))
-                    }
-                    onBlur={() => handleQuantityUpdate(item.id)}
-                    onKeyDown={(e) =>
-                      e.key === "Enter" && handleQuantityUpdate(item.id)
-                    }
-                    className="w-16 border rounded text-center"
-                  />
                 </label>
+                <input
+                  type="number"
+                  value={quantities[item.id]}
+                  onChange={(e) =>
+                    handleQuantityChange(item.id, parseInt(e.target.value))
+                  }
+                  onBlur={() => handleQuantityUpdate(item.id)}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && handleQuantityUpdate(item.id)
+                  }
+                  className="w-16 border rounded text-center"
+                />
               </div>
             ))
           )}
