@@ -1,24 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import logo from "../assets/logo.svg";
 import { NavLink } from "react-router-dom";
+import { MobileMenuContext } from "../App";
 
 // Custom hook to check if the viewport is mobile-sized.
 function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = React.useState(
-    window.innerWidth < breakpoint
-  );
-
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth < breakpoint);
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < breakpoint);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [breakpoint]);
-
   return isMobile;
 }
 
 const Header = () => {
-  const [showMenu, setShowMenu] = React.useState(false);
+  const { showMenu, setShowMenu } = useContext(MobileMenuContext);
   const isMobile = useIsMobile();
 
   const menuItems = [
@@ -30,20 +27,18 @@ const Header = () => {
   useEffect(() => {
     // Lock scrolling when mobile menu is open.
     document.body.style.overflow = showMenu ? "hidden" : "auto";
-
     // Close mobile menu on Escape key press.
     const handleKeyDown = (e) => {
       if (e.key === "Escape" && showMenu) {
         setShowMenu(false);
       }
     };
-
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.body.style.overflow = "auto";
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [showMenu]);
+  }, [showMenu, setShowMenu]);
 
   return (
     <header className="sticky top-0 left-0 w-full bg-[var(--primary-color)] text-[var(--text-color)] px-8 md:px-12 lg:px-16">
@@ -53,9 +48,7 @@ const Header = () => {
           alt="Company Logo"
           className="size-[var(--header-height-sm)] md:size-[var(--header-height-md)] lg:size-[var(--header-height-lg)]"
         />
-
         {isMobile ? (
-          // On mobile, show a toggle button.
           <button
             className="size-[var(--header-height-sm)] md:size-[var(--header-height-md)] lg:size-[var(--header-height-lg)] text-center content-center"
             onClick={() => setShowMenu((prev) => !prev)}
@@ -67,12 +60,7 @@ const Header = () => {
             </span>
           </button>
         ) : (
-          // On desktop, show the menu inline.
-          <nav
-            className="flex space-x-8"
-            role="navigation"
-            aria-label="Main Navigation"
-          >
+          <nav className="flex space-x-8" role="navigation" aria-label="Main Navigation">
             {menuItems.map((menuItem, index) => (
               <NavLink
                 to={menuItem.path}
@@ -87,16 +75,13 @@ const Header = () => {
                   <span className="material-symbols-outlined text-base md:text-lg lg:text-2xl">
                     {menuItem.icon}
                   </span>
-                  <p className="text-xs">
-                    {menuItem.label}
-                  </p>
+                  <p className="text-xs">{menuItem.label}</p>
                 </div>
               </NavLink>
             ))}
           </nav>
         )}
       </div>
-
       {isMobile && showMenu && (
         <nav
           className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[var(--primary-color)] transition-opacity duration-300"
@@ -130,9 +115,7 @@ const Header = () => {
                   <span className="material-symbols-outlined text-base md:text-lg lg:text-2xl">
                     {menuItem.icon}
                   </span>
-                  <p className="text-sm md:text-sm lg:text-xl">
-                    {menuItem.label}
-                  </p>
+                  <p className="text-sm md:text-sm lg:text-xl">{menuItem.label}</p>
                 </div>
               </NavLink>
             ))}

@@ -7,6 +7,8 @@ import Cart from "./components/Cart";
 
 // Create Cart Context
 export const CartContext = createContext();
+// Create Mobile Menu Context to share the mobile menu state
+export const MobileMenuContext = createContext();
 
 const Layout = ({ children }) => {
   return (
@@ -51,11 +53,12 @@ const routes = (addToCart, cart, removeFromCart, updateCart) =>
 
 function App() {
   const [cart, setCart] = useState([]);
+  // Mobile menu state shared between components.
+  const [showMenu, setShowMenu] = useState(false);
 
   const addToCart = (item) => {
     setCart((prevCart) => {
       const existingItem = prevCart.find((cartItem) => cartItem.id === item.id);
-
       if (existingItem) {
         // Update quantity
         return prevCart.map((cartItem) =>
@@ -104,9 +107,7 @@ function App() {
       });
 
       if (!response.ok) {
-        throw new Error(
-          `Failed to update quantity for item with ID: ${itemId}`
-        );
+        throw new Error(`Failed to update quantity for item with ID: ${itemId}`);
       }
     } catch (error) {
       console.error("Error updating quantity:", error);
@@ -118,13 +119,9 @@ function App() {
       // Assuming you need to delete each item from an API
       await Promise.all(
         itemIds.map(async (itemId) => {
-          const response = await fetch(
-            `https://fakestoreapi.com/carts/${itemId}`,
-            {
-              method: "DELETE",
-            }
-          );
-
+          const response = await fetch(`https://fakestoreapi.com/carts/${itemId}`, {
+            method: "DELETE",
+          });
           if (!response.ok) {
             throw new Error(`Failed to delete item with ID: ${itemId}`);
           }
@@ -132,10 +129,7 @@ function App() {
       );
 
       // Update cart state after deletion
-      setCart((prevCart) =>
-        prevCart.filter((item) => !itemIds.includes(item.id))
-      );
-
+      setCart((prevCart) => prevCart.filter((item) => !itemIds.includes(item.id)));
       console.log("Deleted items:", itemIds);
     } catch (error) {
       console.error("Error deleting items:", error);
@@ -143,13 +137,15 @@ function App() {
   };
 
   return (
-    <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, updateCart }}
-    >
-      <RouterProvider
-        router={routes(addToCart, cart, removeFromCart, updateCart)}
-      />
-    </CartContext.Provider>
+    <MobileMenuContext.Provider value={{ showMenu, setShowMenu }}>
+      <CartContext.Provider
+        value={{ cart, addToCart, removeFromCart, updateCart }}
+      >
+        <RouterProvider
+          router={routes(addToCart, cart, removeFromCart, updateCart)}
+        />
+      </CartContext.Provider>
+    </MobileMenuContext.Provider>
   );
 }
 
