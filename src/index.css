@@ -11,9 +11,9 @@
   --primary-color: rgb(219, 226, 239);
   --secondary-color: rgb(63, 114, 175);
   --text-color: rgb(17, 45, 78);
-  --header-height-sm: 3rem;
+  --header-height-sm: 5rem;
   --header-height-md: 5rem;
-  --header-height-lg: 4rem;
+  --header-height-lg: 5rem;
 }
 
 * {

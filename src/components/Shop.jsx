@@ -1,26 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { use } from "react";
 
 const Shop = ({ addToCart, cart }) => {
   const [items, setItems] = useState([]);
-  const [filteredItems, setFilteredItems] = useState(items);
-  const [seeMore, setSeeMore] = useState({});
+  const [filteredItems, setFilteredItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [isFadingOut, setIsFadingOut] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const showConfirmation = (message) => {
-    setConfirmationMessage(message);
-    setIsFadingOut(false);
-
-    // Trigger fade-out after 2.5 seconds
-    setTimeout(() => setIsFadingOut(true), 1000);
-
-    // Clear the message after the transition ends
-    setTimeout(() => setConfirmationMessage(""), 2000);
-  };
+  const BASE_URL = "https://fakestoreapi.com/products";
 
   const categories = [
     { label: "All", category: "" },
@@ -30,53 +22,52 @@ const Shop = ({ addToCart, cart }) => {
     { label: "Electronics", category: "electronics" },
   ];
 
-  // const items = [
-  //   {
-  //     img: "wala.jpg",
-  //     name: "cutie pie",
-  //     price: "20",
-  //   },
-  //   {
-  //     img: "wala.jpg",
-  //     name: "cuti potato",
-  //     price: "50",
-  //   },
-  //   {
-  //     img: "wala.jpg",
-  //     name: "cut pota",
-  //     price: "100",
-  //   },
-  //   {
-  //     img: "wala.jpg",
-  //     name: "c pota",
-  //     price: "100",
-  //   },
-  // ];
-
-  const BASE_URL = "https://fakestoreapi.com/products";
-
+  // Fetch items from API
   useEffect(() => {
     const fetchItems = async () => {
-      const response = await fetch(`${BASE_URL}`);
-      const items = await response.json();
-      console.log(items);
-      setItems(items);
+      setLoading(true);
+      try {
+        const response = await fetch(BASE_URL);
+        if (!response.ok) throw new Error("Failed to fetch items");
+        const data = await response.json();
+        setItems(data);
+        setFilteredItems(data);
+      } catch (err) {
+        setError(err.message);
+      }
+      setLoading(false);
     };
-
     fetchItems();
   }, []);
 
-  useEffect(() => {
-    setFilteredItems(items);
-  }, [items]);
-
-  const toggleSeeMore = (id) => {
-    setSeeMore((prevState) => {
-      const newState = { ...prevState, [id]: !prevState[id] };
-      return newState;
-    });
+  // Handle category filter (combining search filter if present)
+  const filterItems = (categoryValue = "", query = searchQuery) => {
+    let updatedItems = [...items];
+    if (categoryValue) {
+      updatedItems = updatedItems.filter(
+        (item) => item.category === categoryValue
+      );
+    }
+    if (query) {
+      updatedItems = updatedItems.filter((item) =>
+        item.title.toLowerCase().includes(query.toLowerCase())
+      );
+    }
+    setFilteredItems(updatedItems);
   };
 
+  const handleCategoryClick = (categoryValue) => {
+    filterItems(categoryValue);
+  };
+
+  // Update search and filter items
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    filterItems("", query);
+  };
+
+  // Show and hide modal
   const showModal = (item) => {
     setSelectedItem(item);
     setModalVisible(true);
@@ -87,147 +78,139 @@ const Shop = ({ addToCart, cart }) => {
     setSelectedItem(null);
   };
 
+  // Prevent body scroll when modal is open
   useEffect(() => {
-    if (modalVisible) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-
-    return () => {
-      document.body.style.overflow = "auto"; // Cleanup when unmounting
-    };
+    document.body.style.overflow = modalVisible ? "hidden" : "auto";
+    return () => (document.body.style.overflow = "auto");
   }, [modalVisible]);
 
+  // Display confirmation message with fade-out effect
+  const showConfirmation = (message) => {
+    setConfirmationMessage(message);
+    setIsFadingOut(false);
+    setTimeout(() => setIsFadingOut(true), 1500);
+    setTimeout(() => setConfirmationMessage(""), 2500);
+  };
+
   return (
-    <>
-      <nav className=" bg-[var(--bg-color)] top-[var(--header-height-sm)] md:top-[var(--header-height-md)] lg:top-[var(--header-height-lg)] left-0 w-full z-10">
-        <ul className=" flex  justify-center gap-4 flex-wrap">
-          {categories.map((category, index) => (
-            <li
-              key={index}
-              className="p-4 cursor-pointer"
-              onClick={() => {
-                const filteredItems = items.filter((item) =>
-                  category.category
-                    ? item.category === category.category
-                    : item.category === item.category
-                );
-                setFilteredItems(filteredItems);
-              }}
+    <div>
+      <nav className="bg-[var(--bg-color)] sticky top-[var(--header-height-sm)] left-0 w-full z-10">
+        <div className="flex justify-center items-center flex-wrap gap-4 p-4">
+          {categories.map((cat, idx) => (
+            <button
+              key={idx}
+              className="p-2 bg-gray-200 rounded hover:bg-gray-300"
+              onClick={() => handleCategoryClick(cat.category)}
             >
-              {category.label}
-            </li>
+              {cat.label}
+            </button>
           ))}
-        </ul>
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchQuery}
+            onChange={handleSearch}
+            className="p-2 border rounded ml-4"
+          />
+        </div>
       </nav>
-      <div className="bg-[var(--bg-color)] min-h-[calc(100vh-(var(--header-height-sm)*2))] md:min-h-[calc(100vh-(var(--header-height-md)*2))] lg:min-h-[calc(100vh-(var(--header-height-lg)*2))] text-[var(--text-color)] py-8 px-32 justify-center grid sample gap-16 grid-cols-[repeat(auto-fill,15rem)]">
-        {filteredItems.map((item, index) => (
-          <div key={item.id} className="min-w-24  flex-col justify-between">
-            <div className="flex flex-col h-fit justify bg-[#ffffff] flex-between p-4">
-              <div className="flex flex-col gap-1">
-                <img
-                  src={item.image}
-                  className="w-auto h-52 bg-transparent p-4"
-                  onClick={() => showModal(item)}
-                />
-                <div>
-                  <span className="truncate w-full block cursor-pointer">
-                    {item.title}
-                  </span>
-                </div>
-                <span className="flex items-center">
-                  {item.rating.rate}{" "}
-                  <span className="material-symbols-outlined text-sm">
-                    star
-                  </span>
+
+      <div className="pt-8 px-8">
+        {loading && <p>Loading items...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {filteredItems.map((item) => (
+            <div key={item.id} className="bg-white p-4 rounded shadow">
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-full h-48 object-contain cursor-pointer"
+                onClick={() => showModal(item)}
+              />
+              <h3 className="mt-2 font-semibold truncate">{item.title}</h3>
+              <p className="mt-1">₱ {item.price}</p>
+              <div className="flex items-center mt-1">
+                <span>{item.rating.rate}</span>
+                <span className="material-symbols-outlined text-sm ml-1">
+                  star
                 </span>
               </div>
-              <div className="flex justify-between items-center">
-                <div className="text-base font-medium">
-                  <span className="">₱ {item.price}</span>
-                </div>
-                {/* <span
-                  className="material-symbols-outlined cursor-p"
-                  onClick={() => addToCart(item)}
+              <button
+                className="mt-2 w-full bg-blue-500 text-white py-1 rounded hover:bg-blue-600"
+                onClick={() => {
+                  addToCart({ ...item, quantity });
+                  showConfirmation("Item added to cart!");
+                }}
+              >
+                Add to Cart
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Modal rendered once */}
+      {modalVisible && selectedItem && (
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+          onClick={closeModal}
+        >
+          <div
+            className="bg-white p-6 rounded-lg max-w-md w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-bold">{selectedItem.title}</h2>
+              <button onClick={closeModal} className="text-gray-500">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <img
+              src={selectedItem.image}
+              alt={selectedItem.title}
+              className="w-full h-64 object-contain my-4"
+            />
+            <p className="text-base mb-4">{selectedItem.description}</p>
+            <div className="flex items-center justify-between">
+              <p className="font-semibold">Price: ₱ {selectedItem.price}</p>
+              <div className="flex items-center gap-4">
+                <input
+                  type="number"
+                  min="1"
+                  value={quantity}
+                  onChange={(e) => setQuantity(Number(e.target.value))}
+                  className="w-16 p-2 border rounded"
+                />
+                <button
+                  className="flex flex-col items-center"
+                  onClick={() => {
+                    addToCart({ ...selectedItem, quantity });
+                    showConfirmation("Item added to cart!");
+                    closeModal();
+                  }}
                 >
-                  add_shopping_cart
-                </span> */}
+                  <span className="material-symbols-outlined">
+                    add_shopping_cart
+                  </span>
+                  <span className="text-xs">Add to Cart</span>
+                </button>
               </div>
-
-              {modalVisible && selectedItem && (
-                <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center cursor-context-menu">
-                  <div className="bg-white p-6 rounded-lg max-w-md w-full">
-                    <div className="flex items-center justify-between">
-                      <h2 className="text-lg font-bold">
-                        {selectedItem.title}
-                      </h2>
-
-                      <span
-                        className="material-symbols-outlined cursor-pointer"
-                        onClick={closeModal}
-                      >
-                        close
-                      </span>
-                    </div>
-                    <div className="w-full h-64 flex justify-center p-4">
-                      <img src={selectedItem.image} className=" " />
-                    </div>
-                    <p className="text-base text-justify mb-4">
-                      {selectedItem.description}
-                    </p>
-
-                    <div className="flex items-center justify-between">
-                      <p className="text-base font-semibold">
-                        Price: ₱ {selectedItem.price}
-                      </p>
-                      <div className="flex items-center gap-4">
-                        <input
-                          type="number"
-                          name="quantity"
-                          id="quantity"
-                          min="1"
-                          defaultValue="1"
-                          className="w-16 px-2 py-1 border rounded-lg"
-                          onChange={(e) => setQuantity(Number(e.target.value))}
-                        />
-                        <div
-                          className="flex flex-col items-center cursor-pointer"
-                          onClick={() => {
-                            addToCart({ ...selectedItem, quantity });
-                            showConfirmation("Item added to cart!");
-                          }}
-                        >
-                          <span className="material-symbols-outlined ">
-                            add_shopping_cart
-                          </span>
-                          <span className="text-xs">Add to Cart</span>
-                        </div>
-                      </div>
-                      {confirmationMessage && (
-                        <div
-                          className={`fixed inset-0 flex justify-center items-center bg-black bg-opacity-30 z-50 transition-opacity animate-fade-in duration-500 ${
-                            isFadingOut ? "opacity-0" : "opacity-100"
-                          }`}
-                        >
-                          <div
-                            className={`bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg transform transition-transform duration-500 ${
-                              isFadingOut ? "scale-90" : "scale-100"
-                            }`}
-                          >
-                            {confirmationMessage}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
-        ))}
-      </div>
-    </>
+        </div>
+      )}
+
+      {/* Confirmation message */}
+      {confirmationMessage && (
+        <div
+          className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-4 rounded shadow transition-opacity duration-500 ${
+            isFadingOut ? "opacity-0" : "opacity-100"
+          }`}
+        >
+          {confirmationMessage}
+        </div>
+      )}
+    </div>
   );
 };
 

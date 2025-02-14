@@ -1,24 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const Cart = ({ cart, removeFromCart, updateCart }) => {
+const Cart = ({ cart, removeFromCart, updateCart, proceedToCheckout }) => {
+  // Synchronize quantities with the current cart items.
   const [selectedItems, setSelectedItems] = useState([]);
-  const [quantities, setQuantities] = useState(
-    cart.reduce((acc, item) => ({ ...acc, [item.id]: item.quantity }), {})
-  );
+  const [quantities, setQuantities] = useState({});
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [isFadingOut, setIsFadingOut] = useState(false);
+
+  useEffect(() => {
+    setQuantities(
+      cart.reduce((acc, item) => ({ ...acc, [item.id]: item.quantity }), {})
+    );
+  }, [cart]);
 
   // Delay helper
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-  // Show confirmation for a fixed duration and then clear it.
+  // Show confirmation for a fixed duration then clear it.
   const showConfirmation = async (message) => {
     setConfirmationMessage(message);
     setIsFadingOut(false);
-    // Start fade-out after 1 second.
     await delay(1000);
     setIsFadingOut(true);
-    // Wait another second for the fade-out to complete.
     await delay(1000);
     setConfirmationMessage("");
   };
@@ -32,33 +35,47 @@ const Cart = ({ cart, removeFromCart, updateCart }) => {
     );
   };
 
-  // Remove all selected items.
-  const handleRemoveSelected = async () => {
-    console.log("Removing:", selectedItems);
-    await removeFromCart(selectedItems);
-    setSelectedItems([]); // Clear selection after deletion.
+  // Toggle select-all functionality.
+  const handleSelectAllChange = () => {
+    if (selectedItems.length === cart.length) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(cart.map((item) => item.id));
+    }
   };
 
+  // Remove all selected items.
+  const handleRemoveSelected = async () => {
+    if (selectedItems.length === 0) return;
+    await removeFromCart(selectedItems);
+    setSelectedItems([]);
+    await showConfirmation("Selected items removed from cart!");
+  };
+
+  //dummy checkout
+  const handleCheckoutSelected = async () => {
+      if (selectedItems.length === 0) return;
+      await removeFromCart(selectedItems);
+      setSelectedItems([]);
+      await showConfirmation("Selected items has been checkout!");
+  };
+
+  // Handle quantity changes.
   const handleQuantityChange = (itemId, newQuantity) => {
-    if (newQuantity < 1) return; // Prevent negative or zero quantity.
-    setQuantities((prevQuantities) => ({
-      ...prevQuantities,
-      [itemId]: newQuantity,
-    }));
+    if (newQuantity < 1) return;
+    setQuantities((prev) => ({ ...prev, [itemId]: newQuantity }));
   };
 
   const handleQuantityUpdate = async (itemId) => {
     await updateCart(itemId, quantities[itemId]);
   };
 
-  // Handler for the delete icon: first show confirmation, then remove items.
-  const handleDeleteClick = async () => {
-    if (selectedItems.length === 0) return;
-    await Promise.all([
-      handleRemoveSelected(),
-      showConfirmation("Item removed from cart!"),
-    ]);
-  };
+  // Compute total for all items.
+  const totalAmount = cart.reduce(
+    (total, item) =>
+      total + item.price * (quantities[item.id] || item.quantity),
+    0
+  );
 
   return (
     <div className="p-4 flex flex-col min-h-[calc(100vh-var(--header-height-sm))] md:min-h-[calc(100vh-var(--header-height-md))] lg:min-h-[calc(100vh-var(--header-height-lg))] justify-between">
@@ -66,16 +83,18 @@ const Cart = ({ cart, removeFromCart, updateCart }) => {
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Your Cart</h2>
           <span
-            onClick={handleDeleteClick}
+            onClick={handleRemoveSelected}
             className={`material-symbols-outlined px-4 py-2 ${
               selectedItems.length === 0
                 ? "text-gray-400 cursor-not-allowed"
                 : "text-black cursor-pointer"
             }`}
+            title="Remove selected items"
           >
             delete
           </span>
         </div>
+
         {confirmationMessage && (
           <div
             className={`fixed inset-0 flex justify-center items-center bg-black bg-opacity-30 z-50 transition-opacity duration-500 ${
@@ -91,6 +110,19 @@ const Cart = ({ cart, removeFromCart, updateCart }) => {
             </div>
           </div>
         )}
+
+        <div className="flex items-center gap-2 mb-4">
+          <label className="flex items-center gap-1">
+            <input
+              type="checkbox"
+              checked={cart.length > 0 && selectedItems.length === cart.length}
+              onChange={handleSelectAllChange}
+              className="w-4 h-4"
+            />
+            <span>Select All</span>
+          </label>
+        </div>
+
         <div className="flex flex-col gap-2">
           {cart.length === 0 ? (
             <p>Your cart is empty.</p>
@@ -108,7 +140,11 @@ const Cart = ({ cart, removeFromCart, updateCart }) => {
                     onChange={() => handleCheckboxChange(item.id)}
                     className="w-4 h-4"
                   />
-                  <img src={item.image} className="size-12" alt={item.title} />
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-12 h-12 object-contain"
+                  />
                   <div>
                     <h3 className="font-medium">{item.title}</h3>
                     <p>₱ {item.price}</p>
@@ -116,7 +152,7 @@ const Cart = ({ cart, removeFromCart, updateCart }) => {
                 </label>
                 <input
                   type="number"
-                  value={quantities[item.id]}
+                  value={quantities[item.id] || item.quantity}
                   onChange={(e) =>
                     handleQuantityChange(item.id, parseInt(e.target.value))
                   }
@@ -131,27 +167,20 @@ const Cart = ({ cart, removeFromCart, updateCart }) => {
           )}
         </div>
       </div>
-      <div className="flex gap-4 items-center justify-end">
-        <div className="w-32">
-          <span>
-            Total: ₱{" "}
-            {cart
-              .filter((item) => selectedItems.includes(item.id))
-              .reduce(
-                (total, item) =>
-                  total + item.price * (quantities[item.id] || item.quantity),
-                0
-              )}
-          </span>
+
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-end mt-4">
+        <div className="w-full sm:w-32 text-right">
+          <span className="font-semibold">Total: ₱ {totalAmount.toFixed(2)}</span>
         </div>
-        {/* If you want the Checkout button to trigger removal directly, consider unifying the UX */}
-        <button
-          className="border bg-red-300 p-4"
-          onClick={handleRemoveSelected}
-          disabled={selectedItems.length === 0}
-        >
-          Checkout
-        </button>
+        <div className="flex gap-4">
+          <button
+            className="border bg-blue-300 p-4"
+            onClick={handleCheckoutSelected}
+            disabled={cart.length === 0}
+          >
+            Checkout
+          </button>
+        </div>
       </div>
     </div>
   );
