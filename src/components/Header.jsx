@@ -5,7 +5,9 @@ import { MobileMenuContext } from "../App";
 
 // Custom hook to check if the viewport is mobile-sized.
 function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = React.useState(window.innerWidth < breakpoint);
+  const [isMobile, setIsMobile] = React.useState(
+    window.innerWidth < breakpoint
+  );
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < breakpoint);
     window.addEventListener("resize", handleResize);
@@ -46,11 +48,11 @@ const Header = () => {
         <img
           src={logo}
           alt="Company Logo"
-          className="size-[var(--header-height-sm)] md:size-[var(--header-height-md)] lg:size-[var(--header-height-lg)]"
+          className="size-[var(--header-height)] md:size-[var(--header-height)] lg:size-[var(--header-height)]"
         />
         {isMobile ? (
           <button
-            className="size-[var(--header-height-sm)] md:size-[var(--header-height-md)] lg:size-[var(--header-height-lg)] text-center content-center"
+            className="size-[var(--header-height)] md:size-[var(--header-height)] lg:size-[var(--header-height)] text-center content-center"
             onClick={() => setShowMenu((prev) => !prev)}
             aria-label="Toggle menu"
             aria-expanded={showMenu}
@@ -60,7 +62,11 @@ const Header = () => {
             </span>
           </button>
         ) : (
-          <nav className="flex space-x-8" role="navigation" aria-label="Main Navigation">
+          <nav
+            className="flex space-x-8"
+            role="navigation"
+            aria-label="Main Navigation"
+          >
             {menuItems.map((menuItem, index) => (
               <NavLink
                 to={menuItem.path}
@@ -89,11 +95,11 @@ const Header = () => {
           aria-label="Mobile Navigation"
         >
           <button
-            className="absolute top-0 right-8 md:right-12 lg:right-16"
+            className="absolute top-0 right-8 md:right-12 lg:right-16 p-0"
             onClick={() => setShowMenu((prev) => !prev)}
             aria-label="Close menu"
           >
-            <div className="size-[var(--header-height-sm)] md:size-[var(--header-height-md)] lg:size-[var(--header-height-lg)] text-center content-center">
+            <div className="w-[var(--header-height)] h-[var(--header-height)] text-center content-center">
               <span className="material-symbols-outlined text-base md:text-lg lg:text-2xl">
                 close
               </span>
@@ -115,7 +121,9 @@ const Header = () => {
                   <span className="material-symbols-outlined text-base md:text-lg lg:text-2xl">
                     {menuItem.icon}
                   </span>
-                  <p className="text-sm md:text-sm lg:text-xl">{menuItem.label}</p>
+                  <p className="text-sm md:text-sm lg:text-xl">
+                    {menuItem.label}
+                  </p>
                 </div>
               </NavLink>
             ))}

@@ -54,10 +54,10 @@ const Cart = ({ cart, removeFromCart, updateCart, proceedToCheckout }) => {
 
   //dummy checkout
   const handleCheckoutSelected = async () => {
-      if (selectedItems.length === 0) return;
-      await removeFromCart(selectedItems);
-      setSelectedItems([]);
-      await showConfirmation("Selected items has been checkout!");
+    if (selectedItems.length === 0) return;
+    await removeFromCart(selectedItems);
+    setSelectedItems([]);
+    await showConfirmation("Selected items has been checkout!");
   };
 
   // Handle quantity changes.
@@ -78,7 +78,7 @@ const Cart = ({ cart, removeFromCart, updateCart, proceedToCheckout }) => {
   );
 
   return (
-    <div className="p-4 flex flex-col min-h-[calc(100vh-var(--header-height-sm))] md:min-h-[calc(100vh-var(--header-height-md))] lg:min-h-[calc(100vh-var(--header-height-lg))] justify-between">
+    <div className="p-4 flex flex-col min-h-[calc(100vh-var(--header-height))] md:min-h-[calc(100vh-var(--header-height))] lg:min-h-[calc(100vh-var(--header-height))] justify-between">
       <div>
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Your Cart</h2>
@@ -170,7 +170,9 @@ const Cart = ({ cart, removeFromCart, updateCart, proceedToCheckout }) => {
 
       <div className="flex flex-col sm:flex-row gap-4 items-center justify-end mt-4">
         <div className="w-full sm:w-32 text-right">
-          <span className="font-semibold">Total: ₱ {totalAmount.toFixed(2)}</span>
+          <span className="font-semibold">
+            Total: ₱ {totalAmount.toFixed(2)}
+          </span>
         </div>
         <div className="flex gap-4">
           <button

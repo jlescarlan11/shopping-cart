@@ -46,7 +46,9 @@ const Shop = ({ addToCart, cart }) => {
   const filterItems = (categoryValue = "", query = searchQuery) => {
     let updatedItems = [...items];
     if (categoryValue) {
-      updatedItems = updatedItems.filter((item) => item.category === categoryValue);
+      updatedItems = updatedItems.filter(
+        (item) => item.category === categoryValue
+      );
     }
     if (query) {
       updatedItems = updatedItems.filter((item) =>
@@ -94,7 +96,7 @@ const Shop = ({ addToCart, cart }) => {
     <div>
       {/* Only render the fixed filtering navigation when the mobile menu is not active */}
       {!showMenu && (
-        <nav className="bg-[var(--bg-color)] sticky top-[var(--header-height-sm)] left-0 w-full z-10">
+        <nav className="bg-[var(--bg-color)] sticky top-[var(--header-height)] left-0 w-full z-10">
           <div className="flex justify-center items-center flex-wrap gap-4 p-4">
             {categories.map((cat, idx) => (
               <button
@@ -132,7 +134,9 @@ const Shop = ({ addToCart, cart }) => {
               <p className="mt-1">₱ {item.price}</p>
               <div className="flex items-center mt-1">
                 <span>{item.rating.rate}</span>
-                <span className="material-symbols-outlined text-sm ml-1">star</span>
+                <span className="material-symbols-outlined text-sm ml-1">
+                  star
+                </span>
               </div>
               <button
                 className="mt-2 w-full bg-blue-500 text-white py-1 rounded hover:bg-blue-600"
@@ -154,14 +158,21 @@ const Shop = ({ addToCart, cart }) => {
           className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
           onClick={closeModal}
         >
-          <div className="bg-white p-6 rounded-lg max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="bg-white p-6 rounded-lg max-w-md w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-bold">{selectedItem.title}</h2>
               <button onClick={closeModal} className="text-gray-500">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
-            <img src={selectedItem.image} alt={selectedItem.title} className="w-full h-64 object-contain my-4" />
+            <img
+              src={selectedItem.image}
+              alt={selectedItem.title}
+              className="w-full h-64 object-contain my-4"
+            />
             <p className="text-base mb-4">{selectedItem.description}</p>
             <div className="flex items-center justify-between">
               <p className="font-semibold">Price: ₱ {selectedItem.price}</p>
@@ -181,7 +192,9 @@ const Shop = ({ addToCart, cart }) => {
                     closeModal();
                   }}
                 >
-                  <span className="material-symbols-outlined">add_shopping_cart</span>
+                  <span className="material-symbols-outlined">
+                    add_shopping_cart
+                  </span>
                   <span className="text-xs">Add to Cart</span>
                 </button>
               </div>

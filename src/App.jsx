@@ -107,7 +107,9 @@ function App() {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to update quantity for item with ID: ${itemId}`);
+        throw new Error(
+          `Failed to update quantity for item with ID: ${itemId}`
+        );
       }
     } catch (error) {
       console.error("Error updating quantity:", error);
@@ -119,9 +121,12 @@ function App() {
       // Assuming you need to delete each item from an API
       await Promise.all(
         itemIds.map(async (itemId) => {
-          const response = await fetch(`https://fakestoreapi.com/carts/${itemId}`, {
-            method: "DELETE",
-          });
+          const response = await fetch(
+            `https://fakestoreapi.com/carts/${itemId}`,
+            {
+              method: "DELETE",
+            }
+          );
           if (!response.ok) {
             throw new Error(`Failed to delete item with ID: ${itemId}`);
           }
@@ -129,7 +134,9 @@ function App() {
       );
 
       // Update cart state after deletion
-      setCart((prevCart) => prevCart.filter((item) => !itemIds.includes(item.id)));
+      setCart((prevCart) =>
+        prevCart.filter((item) => !itemIds.includes(item.id))
+      );
       console.log("Deleted items:", itemIds);
     } catch (error) {
       console.error("Error deleting items:", error);

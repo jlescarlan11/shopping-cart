@@ -1,28 +1,79 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200");
-/* @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,0"); */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --bg-color: rgb(249, 247, 247);
-  --primary-color: rgb(219, 226, 239);
-  --secondary-color: rgb(63, 114, 175);
-  --text-color: rgb(17, 45, 78);
-  --header-height-sm: 5rem;
-  --header-height-md: 5rem;
-  --header-height-lg: 5rem;
+  /* Updated Color Palette */
+  --bg-color: #f5f7fa; /* Light off-white with a hint of blue */
+  --primary-color: #cce7ff; /* Pastel blue for subtle backgrounds and cards */
+  --secondary-color: #1e81b0; /* Deep blue for headers, buttons, or active elements */
+  --accent-color: #ff6f61; /* Vibrant coral to draw attention to CTAs */
+  --text-color: #2e3d49; /* Dark grey-blue for improved readability */
+  --header-height: 5rem;
 }
 
+/* Global Styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Poppins";
+  font-family: "Poppins", sans-serif;
 }
 
+/* Cool Enhancement: Adding a smooth fade-in transition for the body */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* Example Header Styling with a Gradient */
+header {
+  background: linear-gradient(
+    135deg,
+    var(--secondary-color) 0%,
+    var(--primary-color) 100%
+  );
+  height: var(--header-height);
+  align-items: center;
+  padding: 0 1rem;
+}
+
+/* Example Button Styling Using the Accent Color */
+button,
+.btn-accent {
+  background-color: var(--accent-color);
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover,
+.btn-accent:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Example Card Styling */
+.card {
+  background-color: var(--primary-color);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* Utility class for minimum screen height */
 .min-screen {
-  min-height: 100% - 10rem;
+  min-height: calc(100vh - 10rem);
 }
