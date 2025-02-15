@@ -43,9 +43,9 @@ header {
 }
 
 /* Example Button Styling Using the Accent Color */
+.btn,
 button,
 .btn-accent {
-  background-color: var(--accent-color);
   color: #fff;
   padding: 0.75rem 1.5rem;
   border: none;
@@ -54,10 +54,10 @@ button,
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.btn:hover,
 button:hover,
 .btn-accent:hover {
   transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Example Card Styling */

@@ -47,7 +47,7 @@ const Home = () => {
       {!showMenu && (
         <NavLink
           to="/shop"
-          className="bg-[var(--secondary-color)] text-[var(--text-color)] text-base md:text-xl font-bold h-10 md:h-12 px-4 py-2 flex items-center justify-center gap-1 transform transition-transform hover:scale-105"
+          className="btn bg-[var(--secondary-color)] text-[var(--text-color)] text-base md:text-xl font-bold h-10 md:h-12 px-4 py-2 flex items-center justify-center gap-1 transform transition-transform hover:scale-105"
         >
           Shop
           <span className="material-symbols-outlined font-bold text-base md:text-xl">

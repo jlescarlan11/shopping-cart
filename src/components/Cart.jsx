@@ -176,7 +176,11 @@ const Cart = ({ cart, removeFromCart, updateCart, proceedToCheckout }) => {
         </div>
         <div className="flex gap-4">
           <button
-            className="border bg-blue-300 p-4"
+            className={`border bg-blue-300 p-4 ${
+              selectedItems.length === 0
+                ? "text-gray-400 cursor-not-allowed"
+                : "text-black cursor-pointer"
+            }`}
             onClick={handleCheckoutSelected}
             disabled={cart.length === 0}
           >
