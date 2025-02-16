@@ -41,7 +41,7 @@ const Home = () => {
       </div>
       <p className="text-sm md:text-base lg:text-lg text-center max-w-3xl">
         Discover the latest trends and exclusive collections that match your
-        unique style. Step into a world where fashion meets comfort.
+        unique style. Step into a world where fashion meets comfort..
       </p>
 
       {!showMenu && (
