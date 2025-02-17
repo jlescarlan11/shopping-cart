@@ -52,7 +52,7 @@ const Header = () => {
         />
         {isMobile ? (
           <button
-            className="size-[var(--header-height)] md:size-[var(--header-height)] lg:size-[var(--header-height)] text-center content-center"
+            className="size-[var(--header-height)] md:size-[var(--header-height)] lg:size-[var(--header-height)] text-center content-center text-[var(--text-color)]"
             onClick={() => setShowMenu((prev) => !prev)}
             aria-label="Toggle menu"
             aria-expanded={showMenu}

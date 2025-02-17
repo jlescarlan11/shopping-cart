@@ -87,7 +87,7 @@ const Cart = ({ cart, removeFromCart, updateCart, proceedToCheckout }) => {
             className={`material-symbols-outlined px-4 py-2 ${
               selectedItems.length === 0
                 ? "text-gray-400 cursor-not-allowed"
-                : "text-black cursor-pointer"
+                : "text-[var(--text-color)] cursor-pointer"
             }`}
             title="Remove selected items"
           >
@@ -143,7 +143,7 @@ const Cart = ({ cart, removeFromCart, updateCart, proceedToCheckout }) => {
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-12 h-12 object-contain"
+                    className="w-12 h-12 bg-white object-contain p-1"
                   />
                   <div>
                     <h3 className="font-medium">{item.title}</h3>
@@ -160,7 +160,7 @@ const Cart = ({ cart, removeFromCart, updateCart, proceedToCheckout }) => {
                   onKeyDown={(e) =>
                     e.key === "Enter" && handleQuantityUpdate(item.id)
                   }
-                  className="w-16 border rounded text-center"
+                  className="w-16 border rounded text-center text-[var(--bg-color)]"
                 />
               </div>
             ))
@@ -176,10 +176,10 @@ const Cart = ({ cart, removeFromCart, updateCart, proceedToCheckout }) => {
         </div>
         <div className="flex gap-4">
           <button
-            className={`border bg-blue-300 p-4 ${
+            className={`border bg-[var(--secondary-color)] p-4 ${
               selectedItems.length === 0
                 ? "text-gray-400 cursor-not-allowed"
-                : "text-black cursor-pointer"
+                : "text-[var(--bg-color)] cursor-pointer"
             }`}
             onClick={handleCheckoutSelected}
             disabled={cart.length === 0}

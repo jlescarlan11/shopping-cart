@@ -101,7 +101,7 @@ const Shop = ({ addToCart, cart }) => {
             {categories.map((cat, idx) => (
               <button
                 key={idx}
-                className="p-2 bg-gray-200 rounded hover:bg-gray-300"
+                className="p-2 bg-[var(--secondary-color)] rounded hover:[var(--secondary-color)] hover:opacity-90"
                 onClick={() => handleCategoryClick(cat.category)}
               >
                 {cat.label}
@@ -112,7 +112,7 @@ const Shop = ({ addToCart, cart }) => {
               placeholder="Search products..."
               value={searchQuery}
               onChange={handleSearch}
-              className="p-2 border rounded ml-4"
+              className="p-2 border rounded ml-4 text-[var(--bg-color)]"
             />
           </div>
         </nav>
@@ -123,14 +123,17 @@ const Shop = ({ addToCart, cart }) => {
         {error && <p className="text-red-500">{error}</p>}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {filteredItems.map((item) => (
-            <div key={item.id} className="bg-white p-4 rounded shadow">
+            <div
+              key={item.id}
+              className="bg-white p-4 rounded shadow text-[var(--bg-color)]"
+            >
               <img
                 src={item.image}
                 alt={item.title}
-                className="w-full h-48 object-contain cursor-pointer"
+                className="w-full h-48 object-contain cursor-pointer]"
                 onClick={() => showModal(item)}
               />
-              <h3 className="mt-2 font-semibold truncate">{item.title}</h3>
+              <h3 className="mt-2 font-semibold truncate  ">{item.title}</h3>
               <p className="mt-1">₱ {item.price}</p>
               <div className="flex items-center mt-1">
                 <span>{item.rating.rate}</span>
@@ -139,7 +142,7 @@ const Shop = ({ addToCart, cart }) => {
                 </span>
               </div>
               <button
-                className="mt-2 w-full bg-blue-500 text-white py-1 rounded hover:bg-blue-600"
+                className="mt-2 w-full bg-[var(--secondary-color)] text-[var(--bg-color)] py-1 rounded hover:bg-[var(--secondary-color)] hover:opacity-90"
                 onClick={() => {
                   addToCart({ ...item, quantity });
                   showConfirmation("Item added to cart!");
@@ -155,7 +158,7 @@ const Shop = ({ addToCart, cart }) => {
       {/* Modal rendered once */}
       {modalVisible && selectedItem && (
         <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 text-[var(--bg-color)]"
           onClick={closeModal}
         >
           <div
@@ -182,7 +185,7 @@ const Shop = ({ addToCart, cart }) => {
                   min="1"
                   value={quantity}
                   onChange={(e) => setQuantity(Number(e.target.value))}
-                  className="w-16 p-2 border rounded"
+                  className="w-16 p-2 border rounded text-[var(--bg-color)]"
                 />
                 <button
                   className="flex flex-col items-center"
