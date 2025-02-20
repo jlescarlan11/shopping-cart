@@ -168,7 +168,7 @@ const Cart = ({ cart, removeFromCart, updateCart, proceedToCheckout }) => {
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 items-end justify-end mt-4">
+      <div className="flex flex-col sm:flex-row  items-end justify-end mt-4">
         <div className="w-full sm:w-32 text-right">
           <span className="font-semibold">
             Total: ₱ {totalAmount.toFixed(2)}
